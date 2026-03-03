@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.R Rentals | Owner Calendar</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- YOUR ORIGINAL STYLES REMAIN UNCHANGED -->
+    <style>
+        /* KEEPING ALL YOUR ORIGINAL CSS EXACTLY AS IS */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top, #003366 0, #001022 45%, #000611 100%);
+            color: #ffffff;
+            padding: 24px 16px 32px;
+        }
+
+        .shell {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
+            padding: 20px 18px 22px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        header h1 {
+            font-family: 'Oswald', system-ui, sans-serif;
+            font-size: 26px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        header span {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            font-size: 11px;
+        }
+
+        .pill i {
+            color: #ffd700;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 0 0 10px;
+            color: #ffd700;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        @media (min-width: 720px) {
+            .grid {
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+            }
+        }
+
+        .panel {
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.85));
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 14px 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 8px 9px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        select:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: rgba(255, 215, 0, 0.9);
+            box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.4);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.9fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #ffd700;
+            color: #001f3f;
+            border-radius: 999px;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background: #ffffff;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 7px 12px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(255, 215, 0, 0.8);
+        }
+
+        .note {
+            font-size: 11px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .summary {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 0;
+        }
+
+        .list {
+            max-height: 260px;
+            overflow: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .list thead {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+        }
+
+        .list th,
+        .list td {
+            padding: 6px 9px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .list tbody tr:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+        }
+
+        .badge.red {
+            background: rgba(255, 99, 132, 0.2);
+            color: #ff7b90;
+        }
+
+        .text-muted {
+            opacity: 0.75;
+        }
+
+        footer {
+            max-width: 900px;
+            margin: 12px auto 0;
+            font-size: 11px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        a {
+            color: #ffd700;
+        }
+
+        /* Simple login screen */
+        #login-screen {
+            max-width: 360px;
+            margin: 60px auto 0;
+            padding: 18px 16px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.06), rgba(0,0,0,0.85));
+            box-shadow: 0 18px 50px rgba(0,0,0,0.8);
+        }
+
+        #login-screen h2 {
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #ffd700;
+        }
+
+        #login-screen p {
+            margin: 0 0 12px;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .login-field {
+            margin-bottom: 10px;
+        }
+
+        .login-field label {
+            font-size: 12px;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 7px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(0,0,0,0.6);
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .login-field input:focus {
+            outline: none;
+            border-color: rgba(255,215,0,0.9);
+            box-shadow: 0 0 0 1px rgba(255,215,0,0.5);
+        }
+
+        #login-button {
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        #login-error {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #ff7b90;
+            min-height: 14px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Owner inline calendar */
+        #owner-calendar-wrapper {
+            margin-top: 14px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .owner-cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        #owner-cal-label {
+            font-weight: 600;
+        }
+
+        .owner-cal-weekdays,
+        .owner-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .owner-cal-weekdays div {
+            text-align: center;
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .owner-cal-day {
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.5);
+            font-size: 11px;
+            text-align: center;
+            line-height: 26px;
+        }
+
+        .owner-cal-day.available {
+            background: #ffd700;
+            color: #001f3f;
+            border-color: rgba(0, 0, 0, 0.25);
+            font-weight: 600;
+        }
+
+        .owner-cal-day.unavailable {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.55);
+            border-color: rgba(255, 255, 255, 0.1);
+            filter: grayscale(0.7);
+        }
+
+        .owner-cal-spacer {
+            height: 28px;
+        }
+
+        .owner-cal-legend {
+            margin-top: 6px;
+            font-size: 10px;
+            opacity: 0.85;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .owner-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .owner-dot.available {
+            background: #ffd700;
+        }
+
+        .owner-dot.unavailable {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Owner login -->
+<div id="login-screen">
+    <h2>Owner Login</h2>
+    <p>Enter your credentials to manage bike &amp; scooty availability.</p>
+    <div class="login-field">
+        <label for="login-username">Username</label>
+        <input id="login-username" type="text" autocomplete="username" placeholder="Username">
+    </div>
+    <div class="login-field">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password">
+    </div>
+    <button class="btn-primary" id="login-button" type="button">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Sign in</span>
+    </button>
+    <div id="login-error"></div>
+</div>
+
+<!-- YOUR ORIGINAL HTML BODY CONTENT REMAINS UNCHANGED -->
+<div class="shell hidden" id="owner-app">
+    <header>
+        <div>
+            <h1>Owner Calendar</h1>
+            <p class="tagline">Grey out (block) dates for bikes &amp; scooties that are already rented.</p>
+        </div>
+        <div>
+            <div class="pill">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Use the same browser as the main site.</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid">
+        <section class="panel">
+            <h2>Block / unblock a date</h2>
+            <p class="summary">Pick the vehicle and date that is rented out. Those dates will appear <strong>greyed out</strong> on the customer calendar.</p>
+
+            <div class="row">
+                <div>
+                    <label for="model-select">Vehicle</label>
+                    <select id="model-select"></select>
+                </div>
+                <div>
+                    <label for="date-input">Date</label>
+                    <input type="date" id="date-input">
+                </div>
+            </div>
+
+            <div id="owner-calendar-wrapper">
+                <div class="owner-cal-header">
+                    <span id="owner-cal-label"></span>
+                </div>
+                <div class="owner-cal-weekdays" id="owner-cal-weekdays"></div>
+                <div class="owner-cal-grid" id="owner-cal-grid"></div>
+                <div class="owner-cal-legend">
+                    <span><span class="owner-dot available"></span>Available</span>
+                    <span><span class="owner-dot unavailable"></span>Rented / greyed out</span>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" id="toggle-btn" type="button">
+                    <i class="fa-solid fa-ban"></i>
+                    <span>Mark as rented / free</span>
+                </button>
+                <button class="btn-secondary" id="clear-model-btn" type="button">
+                    <i class="fa-solid fa-eraser"></i>
+                    <span>Clear all for this vehicle</span>
+                </button>
+            </div>
+
+            <p class="note">
+                This page stores your settings in your browser (local storage). As soon as you change something here,
+                reloading the main website will show the updated greyed-out dates.
+            </p>
+        </section>
+
+        <section class="panel">
+            <h2>Rented dates by vehicle</h2>
+            <p class="summary text-muted" id="summary-text"></p>
+
+            <div class="list">
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="width:45%;">Vehicle</th>
+                        <th>Date</th>
+                        <th style="width:20%;">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="rented-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer class="hidden" id="owner-footer">
+    Open <a href="index (1).html" target="_blank" rel="noopener">the main site</a> in another tab to see your changes
+    reflected in the customer calendar.
+</footer>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCzmYlbNqXAFfIl93RrRbiwRGQE13QarqI",
+  authDomain: "arrentals-559f4.firebaseapp.com",
+  projectId: "arrentals-559f4",
+  storageBucket: "arrentals-559f4.firebasestorage.app",
+  messagingSenderId: "197768582450",
+  appId: "1:197768582450:web:029b4c072c7bb959f0332b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const MODELS = [
+  'XPulse 200','Himalayan 411','Himalayan 450','Meteor 350',
+  'Scram 411','Ronin 225','Hunter 350','Classic 350',
+  'NTORQ 125 XT','NTORQ 125','Dio 125','Dio 110'
+];
+
+let ownerAvailability = {};
+let ownerCalMonthCursor = new Date();
+
+function ownerStartOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function ownerToISO(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function setOwnerMonthCursor(dateLike) {
+  const d = new Date(dateLike);
+  ownerCalMonthCursor = new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+function renderModelSelect() {
+  const select = document.getElementById('model-select');
+  select.innerHTML = MODELS.map(m => `<option value="${m}">${m}</option>`).join('');
+}
+
+function renderSummary(data) {
+  let count = 0;
+  for (const model of MODELS) {
+    const arr = data[model];
+    if (Array.isArray(arr)) count += arr.length;
+  }
+  const el = document.getElementById('summary-text');
+  if (!count) {
+    el.textContent = 'No rented dates recorded yet.';
+  } else {
+    el.textContent = `${count} rented date${count === 1 ? '' : 's'} across all vehicles.`;
+  }
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('rented-tbody');
+  const rows = [];
+
+  for (const model of MODELS) {
+    const arr = data[model];
+    if (!Array.isArray(arr) || arr.length === 0) continue;
+
+    const sorted = Array.from(new Set(arr))
+      .filter(x => typeof x === 'string' && x.length === 10)
+      .sort();
+
+    for (const iso of sorted) {
+      rows.push(
+        `<tr>` +
+        `<td>${model}</td>` +
+        `<td>${iso}</td>` +
+        `<td><span class="badge red"><i class="fa-solid fa-ban"></i> Rented</span></td>` +
+        `</tr>`
+      );
+    }
+  }
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="3" class="text-muted" style="text-align:center;padding:12px 8px;">No dates have been blocked yet.</td></tr>`;
+  } else {
+    tbody.innerHTML = rows.join('');
+  }
+}
+
+async function toggleDate() {
+  const model = document.getElementById('model-select').value;
+  const dateVal = document.getElementById('date-input').value;
+
+  if (!dateVal) {
+    alert("Please choose a date.");
+    return;
+  }
+
+  const docId = `${model}_${dateVal}`;
+  const docRef = doc(db, "availability", docId);
+  const snap = await getDoc(docRef);
+
+  if (!snap.exists()) {
+    await setDoc(docRef, { model, date: dateVal });
+  } else {
+    await deleteDoc(docRef);
+  }
+
+  await syncUI();
+}
+
+async function clearModelDates() {
+  const model = document.getElementById('model-select').value;
+  if (!confirm(`Remove all rented dates for "${model}"?`)) return;
+
+  const q = query(collection(db, "availability"), where("model", "==", model));
+  const snap = await getDocs(q);
+  const batch = writeBatch(db);
+
+  snap.forEach(docSnap => batch.delete(docSnap.ref));
+  await batch.commit();
+
+  await syncUI();
+}
+
+async function syncUI() {
+  const snap = await getDocs(collection(db, "availability"));
+  const data = {};
+
+  snap.forEach(docSnap => {
+    const { model, date } = docSnap.data();
+    if (!data[model]) data[model] = [];
+    data[model].push(date);
+  });
+
+  ownerAvailability = data;
+  renderSummary(data);
+  renderTable(data);
+  renderOwnerCalendarForSelected();
+}
+
+function buildOwnerAvailableSet(model) {
+  const blockedArr = ownerAvailability[model] || [];
+  const blocked = new Set(blockedArr);
+  const today = ownerStartOfDay(new Date());
+
+  const daysAhead = 60;
+  const closedWeekdays = new Set([0]); // Sunday closed
+  const result = new Set();
+
+  for (let i = 0; i <= daysAhead; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    if (closedWeekdays.has(d.getDay())) continue;
+    const iso = ownerToISO(d);
+    if (!blocked.has(iso)) result.add(iso);
+  }
+
+  return { availableSet: result, blockedSet: blocked };
+}
+
+function renderOwnerCalendarForSelected() {
+  const labelEl = document.getElementById('owner-cal-label');
+  const weekdaysEl = document.getElementById('owner-cal-weekdays');
+  const gridEl = document.getElementById('owner-cal-grid');
+  if (!labelEl || !weekdaysEl || !gridEl) return;
+
+  const modelSelect = document.getElementById('model-select');
+  if (!modelSelect || !modelSelect.value) {
+    labelEl.textContent = 'Select a vehicle to see its calendar.';
+    weekdaysEl.innerHTML = '';
+    gridEl.innerHTML = '';
+    return;
+  }
+
+  const model = modelSelect.value;
+  const { availableSet, blockedSet } = buildOwnerAvailableSet(model);
+
+  const first = new Date(ownerCalMonthCursor.getFullYear(), ownerCalMonthCursor.getMonth(), 1);
+  const last = new Date(ownerCalMonthCursor.getFullYear(), ownerCalMonthCursor.getMonth() + 1, 0);
+
+  labelEl.textContent = `${first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })} – ${model}`;
+
+  const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  weekdaysEl.innerHTML = weekdayLabels.map(w => `<div>${w}</div>`).join('');
+
+  const firstWeekday = first.getDay();
+  const daysInMonth = last.getDate();
+  const parts = [];
+
+  for (let i = 0; i < firstWeekday; i++) {
+    parts.push('<div class="owner-cal-spacer" aria-hidden="true"></div>');
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(first.getFullYear(), first.getMonth(), day);
+    const iso = ownerToISO(d);
+    const isAvailable = availableSet.has(iso);
+    const isBlocked = blockedSet.has(iso);
+    const cls = isAvailable ? 'available' : 'unavailable';
+    const aria = isAvailable ? `Available ${iso}` : (isBlocked ? `Rented ${iso}` : `Closed ${iso}`);
+    parts.push(`<div class="owner-cal-day ${cls}" aria-label="${aria}">${day}</div>`);
+  }
+
+  gridEl.innerHTML = parts.join('');
+}
+
+function startOwnerApp() {
+  const appShell = document.getElementById('owner-app');
+  const footer = document.getElementById('owner-footer');
+  if (appShell) appShell.classList.remove('hidden');
+  if (footer) footer.classList.remove('hidden');
+
+  document.getElementById('toggle-btn').addEventListener('click', toggleDate);
+  document.getElementById('clear-model-btn').addEventListener('click', clearModelDates);
+
+  const modelSelect = document.getElementById('model-select');
+  if (modelSelect) {
+    modelSelect.addEventListener('change', () => {
+      setOwnerMonthCursor(new Date());
+      renderOwnerCalendarForSelected();
+    });
+  }
+
+  // Default date to today for convenience
+  document.getElementById('date-input').value = new Date().toISOString().slice(0, 10);
+
+  renderModelSelect();
+  setOwnerMonthCursor(new Date());
+  syncUI();
+}
+
+// Simple hardcoded login
+const USERNAME = 'arrentals';
+const PASSWORD = '1234567890';
+const LOGIN_KEY = 'ar_owner_logged_in_v1';
+
+function handleLogin() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  const errorEl = document.getElementById('login-error');
+
+  if (u === USERNAME && p === PASSWORD) {
+    try {
+      localStorage.setItem(LOGIN_KEY, 'true');
+    } catch (_) {}
+
+    document.getElementById('login-screen').classList.add('hidden');
+    startOwnerApp();
+  } else {
+    errorEl.textContent = 'Invalid username or password.';
+  }
+}
+
+document.getElementById('login-button').addEventListener('click', handleLogin);
+document.getElementById('login-password').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// Auto-login if previously authenticated in this browser
+try {
+  if (localStorage.getItem(LOGIN_KEY) === 'true') {
+    document.getElementById('login-screen').classList.add('hidden');
+    startOwnerApp();
+  }
+} catch (_) {
+  // ignore storage errors
+}
+</script>
+
+</body>
+</html>
