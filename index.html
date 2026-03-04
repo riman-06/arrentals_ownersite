@@ -19,19 +19,23 @@
             margin: 0;
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: radial-gradient(circle at top, #003366 0, #001022 45%, #000611 100%);
-            color: #ffffff;
-            padding: 24px 16px 32px;
+            background: #0b0c10;
+            color: #e6e6e6;
+            padding: 32px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .shell {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.55);
+            width: 100%;
+            max-width: 1120px;
+            margin: 24px auto 0;
+            background: rgba(5, 6, 8, 0.96);
             border-radius: 16px;
-            border: 1px solid rgba(255, 215, 0, 0.35);
+            border: 1px solid rgba(255, 106, 0, 0.5);
             box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
-            padding: 20px 18px 22px;
+            padding: 24px 22px 26px;
         }
 
         header {
@@ -60,19 +64,19 @@
             gap: 6px;
             padding: 4px 10px;
             border-radius: 999px;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid rgba(255, 215, 0, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 106, 0, 0.7);
             font-size: 11px;
         }
 
         .pill i {
-            color: #ffd700;
+            color: #ff6a00;
         }
 
         h2 {
             font-size: 16px;
             margin: 0 0 10px;
-            color: #ffd700;
+            color: #ff6a00;
         }
 
         .grid {
@@ -81,15 +85,23 @@
         }
 
         @media (min-width: 720px) {
-            .grid {
-                grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
-            }
+
+        .grid{
+        grid-template-columns:1fr;
+        justify-items:center;
         }
 
+        .panel{
+        width:100%;
+        max-width:760px;
+        }
+
+        }
+        
         .panel {
-            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.85));
+            background: #14161c;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             padding: 14px 14px 12px;
         }
 
@@ -104,17 +116,17 @@
             width: 100%;
             padding: 8px 9px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: rgba(0, 0, 0, 0.65);
-            color: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: rgba(15, 23, 42, 0.85);
+            color: #e5e7eb;
             font-size: 14px;
         }
 
         select:focus,
         input[type="date"]:focus {
             outline: none;
-            border-color: rgba(255, 215, 0, 0.9);
-            box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.4);
+            border-color: #ff6a00;
+            box-shadow: 0 0 0 1px rgba(255, 106, 0, 0.4);
         }
 
         .row {
@@ -138,8 +150,8 @@
         }
 
         .btn-primary {
-            background: #ffd700;
-            color: #001f3f;
+            background: #ff6a00;
+            color: #0b0c10;
             border-radius: 999px;
             border: none;
             padding: 8px 16px;
@@ -151,14 +163,14 @@
         }
 
         .btn-primary:hover {
-            background: #ffffff;
+            background: #ffd7a3;
         }
 
         .btn-secondary {
             background: transparent;
             color: rgba(255, 255, 255, 0.9);
             border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(148, 163, 184, 0.7);
             padding: 7px 12px;
             font-size: 12px;
             display: inline-flex;
@@ -167,7 +179,7 @@
         }
 
         .btn-secondary:hover {
-            border-color: rgba(255, 215, 0, 0.8);
+            border-color: #ff6a00;
         }
 
         .note {
@@ -191,8 +203,8 @@
             max-height: 260px;
             overflow: auto;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(31, 41, 55, 1);
+            background: #050608;
         }
 
         .list table {
@@ -204,18 +216,18 @@
         .list thead {
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.06);
+            background: #0b0c10;
             backdrop-filter: blur(6px);
         }
 
         .list th,
         .list td {
             padding: 6px 9px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(31, 41, 55, 1);
         }
 
         .list tbody tr:nth-child(odd) {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(15, 23, 42, 0.6);
         }
 
         .badge {
@@ -228,8 +240,8 @@
         }
 
         .badge.red {
-            background: rgba(255, 99, 132, 0.2);
-            color: #ff7b90;
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
         }
 
         .text-muted {
@@ -245,7 +257,7 @@
         }
 
         a {
-            color: #ffd700;
+            color: #ff6a00;
         }
 
         /* Simple login screen */
@@ -254,15 +266,15 @@
             margin: 60px auto 0;
             padding: 18px 16px 16px;
             border-radius: 14px;
-            border: 1px solid rgba(255, 215, 0, 0.6);
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.06), rgba(0,0,0,0.85));
+            border: 1px solid rgba(255, 106, 0, 0.6);
+            background: #050608;
             box-shadow: 0 18px 50px rgba(0,0,0,0.8);
         }
 
         #login-screen h2 {
             margin-bottom: 8px;
             font-size: 18px;
-            color: #ffd700;
+            color: #ff6a00;
         }
 
         #login-screen p {
@@ -285,16 +297,16 @@
             width: 100%;
             padding: 7px 8px;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.25);
-            background: rgba(0,0,0,0.6);
-            color: #ffffff;
+            border: 1px solid rgba(148,163,184,0.7);
+            background: rgba(15,23,42,0.85);
+            color: #e5e7eb;
             font-size: 13px;
         }
 
         .login-field input:focus {
             outline: none;
-            border-color: rgba(255,215,0,0.9);
-            box-shadow: 0 0 0 1px rgba(255,215,0,0.5);
+            border-color: #ff6a00;
+            box-shadow: 0 0 0 1px rgba(255,106,0,0.5);
         }
 
         #login-button {
@@ -348,8 +360,8 @@
         .owner-cal-day {
             height: 28px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #1f2933;
+            background: #0b0c10;
             font-size: 11px;
             text-align: center;
             line-height: 26px;
@@ -357,16 +369,16 @@
         }
 
         .owner-cal-day.available {
-            background: #ffd700;
-            color: #001f3f;
-            border-color: rgba(0, 0, 0, 0.25);
+            background: rgba(255,106,0,0.16);
+            color: #ffedd5;
+            border-color: #ff6a00;
             font-weight: 600;
         }
 
         .owner-cal-day.unavailable {
-            background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.55);
-            border-color: rgba(255, 255, 255, 0.1);
+            background: #111827;
+            color: rgba(156, 163, 175, 0.9);
+            border-color: rgba(75, 85, 99, 0.9);
             filter: grayscale(0.7);
         }
 
@@ -392,12 +404,12 @@
         }
 
         .owner-dot.available {
-            background: #ffd700;
+            background: #ff6a00;
         }
 
         .owner-dot.unavailable {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: transparent;
+            border: 1px solid rgba(156, 163, 175, 0.9);
         }
 
         .owner-range-label {
@@ -407,24 +419,76 @@
         }
 
         .owner-cal-day.in-range {
-            box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.7);
-            border-color: rgba(255, 215, 0, 0.9);
+            box-shadow: 0 0 0 1px rgba(255, 106, 0, 0.7);
+            border-color: rgba(255, 106, 0, 0.9);
         }
 
         .owner-cal-day.range-start,
         .owner-cal-day.range-end {
-            background: #ffd700;
-            color: #001f3f;
+            background: #ff6a00;
+            color: #0b0c10;
             font-weight: 700;
         }
 
         .btn-ghost {
             background: transparent;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.85);
             border-radius: 999px;
-            border: 1px dashed rgba(255, 255, 255, 0.24);
+            border: 1px dashed rgba(148, 163, 184, 0.9);
             padding: 6px 10px;
             font-size: 11px;
+        }
+
+        .vehicle-layout{
+        display:grid;
+        gap:16px;
+        align-items:center;
+        justify-content:center;
+        margin:0 auto;
+        max-width:520px;
+        }
+
+        .vehicle-preview{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        }
+
+        .vehicle-select{
+        text-align:center;
+        }
+
+        .vehicle-preview img{
+        max-width:220px;
+        width:100%;
+        height:auto;
+        object-fit:contain;
+        filter:drop-shadow(0 10px 20px rgba(0,0,0,0.7));
+        transition:transform 0.3s ease;
+        }
+
+        .vehicle-preview img:hover{
+        transform:scale(1.05);
+        }
+
+        /* Desktop layout */
+       /* Desktop layout */
+        @media (min-width:720px){
+
+        .vehicle-layout{
+        grid-template-columns:260px 220px;
+        justify-content:center;
+        }
+
+        .grid{
+        justify-content:center;
+        }
+
+        .panel{
+        max-width:760px;
+        margin:0 auto;
+        }
+
         }
     </style>
 </head>
@@ -470,8 +534,18 @@
             <p class="summary">Choose a vehicle, then click a start and end date on the mini calendar to block or unblock a whole range at once. Blocked days show as <strong>greyed out</strong> on the customer calendar.</p>
 
             <div>
+              <div class="vehicle-layout">
+
+                <div class="vehicle-select">
                 <label for="model-select">Vehicle</label>
                 <select id="model-select"></select>
+                </div>
+                
+                <div class="vehicle-preview">
+                <img id="vehicle-image" src="" alt="Vehicle preview">
+                </div>
+                
+              </div>
             </div>
 
             <div id="owner-calendar-wrapper">
@@ -548,6 +622,21 @@ const MODELS = [
   'Scram 411','Ronin 225','Hunter 350','Classic 350',
   'NTORQ 125 XT','NTORQ 125','Dio 125','Dio 110'
 ];
+
+const VEHICLE_IMAGES = {
+  "XPulse 200": "xpulse200.jpg",
+  "Himalayan 411": "himalayan411.jpg",
+  "Himalayan 450": "himalayan450.jpg",
+  "Meteor 350": "meteor350.jpg",
+  "Scram 411": "scram411.jpg",
+  "Ronin 225": "ronin225.jpg",
+  "Hunter 350": "hunter350.jpg",
+  "Classic 350": "classic350.jpg",
+  "NTORQ 125 XT": "ntorq125xt.jpg",
+  "NTORQ 125": "ntorq125.jpg",
+  "Dio 125": "dio125.jpg",
+  "Dio 110": "dio110.jpg"
+};
 
 let ownerAvailability = {};
 let ownerCalMonthCursor = new Date();
@@ -807,6 +896,7 @@ function startOwnerApp() {
       setOwnerMonthCursor(new Date());
       clearOwnerRangeSelection();
       renderOwnerCalendarForSelected();
+      updateVehicleImage();
     });
   }
 
@@ -820,6 +910,7 @@ function startOwnerApp() {
   }
 
   renderModelSelect();
+  updateVehicleImage();
   setOwnerMonthCursor(new Date());
   syncUI();
 }
@@ -860,6 +951,17 @@ try {
 } catch (_) {
   // ignore storage errors
 }
+function updateVehicleImage(){
+  const model = document.getElementById("model-select").value;
+  const img = document.getElementById("vehicle-image");
+
+  const file = VEHICLE_IMAGES[model];
+
+  if(file){
+    img.src = file;
+  }
+}
+
 </script>
 
 </body>
