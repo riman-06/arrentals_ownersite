@@ -353,6 +353,7 @@
             font-size: 11px;
             text-align: center;
             line-height: 26px;
+            cursor: pointer;
         }
 
         .owner-cal-day.available {
@@ -398,6 +399,33 @@
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
+
+        .owner-range-label {
+            font-size: 10px;
+            opacity: 0.8;
+            text-align: right;
+        }
+
+        .owner-cal-day.in-range {
+            box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.7);
+            border-color: rgba(255, 215, 0, 0.9);
+        }
+
+        .owner-cal-day.range-start,
+        .owner-cal-day.range-end {
+            background: #ffd700;
+            color: #001f3f;
+            font-weight: 700;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 999px;
+            border: 1px dashed rgba(255, 255, 255, 0.24);
+            padding: 6px 10px;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
@@ -431,7 +459,7 @@
         <div>
             <div class="pill">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>Use the same browser as the main site.</span>
+                <span></span>
             </div>
         </div>
     </header>
@@ -439,22 +467,17 @@
     <div class="grid">
         <section class="panel">
             <h2>Block / unblock a date</h2>
-            <p class="summary">Pick the vehicle and date that is rented out. Those dates will appear <strong>greyed out</strong> on the customer calendar.</p>
+            <p class="summary">Choose a vehicle, then click a start and end date on the mini calendar to block or unblock a whole range at once. Blocked days show as <strong>greyed out</strong> on the customer calendar.</p>
 
-            <div class="row">
-                <div>
-                    <label for="model-select">Vehicle</label>
-                    <select id="model-select"></select>
-                </div>
-                <div>
-                    <label for="date-input">Date</label>
-                    <input type="date" id="date-input">
-                </div>
+            <div>
+                <label for="model-select">Vehicle</label>
+                <select id="model-select"></select>
             </div>
 
             <div id="owner-calendar-wrapper">
                 <div class="owner-cal-header">
                     <span id="owner-cal-label"></span>
+                    <span id="owner-range-label" class="owner-range-label"></span>
                 </div>
                 <div class="owner-cal-weekdays" id="owner-cal-weekdays"></div>
                 <div class="owner-cal-grid" id="owner-cal-grid"></div>
@@ -465,39 +488,24 @@
             </div>
 
             <div class="btn-row">
-                <button class="btn-primary" id="toggle-btn" type="button">
+                <button class="btn-primary" id="block-range-btn" type="button">
                     <i class="fa-solid fa-ban"></i>
-                    <span>Mark as rented / free</span>
+                    <span>Block selected range</span>
+                </button>
+                <button class="btn-secondary" id="unblock-range-btn" type="button">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Unblock selected range</span>
                 </button>
                 <button class="btn-secondary" id="clear-model-btn" type="button">
                     <i class="fa-solid fa-eraser"></i>
                     <span>Clear all for this vehicle</span>
                 </button>
+                <button class="btn-ghost" id="clear-range-btn" type="button">
+                    <span>Clear selection</span>
+                </button>
             </div>
 
-            <p class="note">
-                This page stores your settings in your browser (local storage). As soon as you change something here,
-                reloading the main website will show the updated greyed-out dates.
-            </p>
-        </section>
-
-        <section class="panel">
-            <h2>Rented dates by vehicle</h2>
-            <p class="summary text-muted" id="summary-text"></p>
-
-            <div class="list">
-                <table>
-                    <thead>
-                    <tr>
-                        <th style="width:45%;">Vehicle</th>
-                        <th>Date</th>
-                        <th style="width:20%;">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody id="rented-tbody">
-                    </tbody>
-                </table>
-            </div>
+        
         </section>
     </div>
 </div>
@@ -543,6 +551,8 @@ const MODELS = [
 
 let ownerAvailability = {};
 let ownerCalMonthCursor = new Date();
+let ownerRangeStartIso = null;
+let ownerRangeEndIso = null;
 
 function ownerStartOfDay(d) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -565,48 +575,28 @@ function renderModelSelect() {
   select.innerHTML = MODELS.map(m => `<option value="${m}">${m}</option>`).join('');
 }
 
-function renderSummary(data) {
-  let count = 0;
-  for (const model of MODELS) {
-    const arr = data[model];
-    if (Array.isArray(arr)) count += arr.length;
+function updateOwnerRangeLabel() {
+  const el = document.getElementById('owner-range-label');
+  if (!el) return;
+
+  if (!ownerRangeStartIso && !ownerRangeEndIso) {
+    el.textContent = 'Click two dates to select a range';
+    return;
   }
-  const el = document.getElementById('summary-text');
-  if (!count) {
-    el.textContent = 'No rented dates recorded yet.';
-  } else {
-    el.textContent = `${count} rented date${count === 1 ? '' : 's'} across all vehicles.`;
+
+  if (ownerRangeStartIso && !ownerRangeEndIso) {
+    el.textContent = `Range start: ${ownerRangeStartIso}`;
+    return;
   }
+
+  el.textContent = `Selected: ${ownerRangeStartIso} → ${ownerRangeEndIso}`;
 }
 
-function renderTable(data) {
-  const tbody = document.getElementById('rented-tbody');
-  const rows = [];
-
-  for (const model of MODELS) {
-    const arr = data[model];
-    if (!Array.isArray(arr) || arr.length === 0) continue;
-
-    const sorted = Array.from(new Set(arr))
-      .filter(x => typeof x === 'string' && x.length === 10)
-      .sort();
-
-    for (const iso of sorted) {
-      rows.push(
-        `<tr>` +
-        `<td>${model}</td>` +
-        `<td>${iso}</td>` +
-        `<td><span class="badge red"><i class="fa-solid fa-ban"></i> Rented</span></td>` +
-        `</tr>`
-      );
-    }
-  }
-
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="3" class="text-muted" style="text-align:center;padding:12px 8px;">No dates have been blocked yet.</td></tr>`;
-  } else {
-    tbody.innerHTML = rows.join('');
-  }
+function clearOwnerRangeSelection() {
+  ownerRangeStartIso = null;
+  ownerRangeEndIso = null;
+  updateOwnerRangeLabel();
+  renderOwnerCalendarForSelected();
 }
 
 async function toggleDate() {
@@ -656,24 +646,20 @@ async function syncUI() {
   });
 
   ownerAvailability = data;
-  renderSummary(data);
-  renderTable(data);
   renderOwnerCalendarForSelected();
 }
 
 function buildOwnerAvailableSet(model) {
   const blockedArr = ownerAvailability[model] || [];
   const blocked = new Set(blockedArr);
-  const today = ownerStartOfDay(new Date());
-
-  const daysAhead = 60;
-  const closedWeekdays = new Set([0]); // Sunday closed
   const result = new Set();
 
-  for (let i = 0; i <= daysAhead; i++) {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    if (closedWeekdays.has(d.getDay())) continue;
+  const year = ownerCalMonthCursor.getFullYear();
+  const month = ownerCalMonthCursor.getMonth();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+
+  for (let day = 1; day <= lastDay; day++) {
+    const d = new Date(year, month, day);
     const iso = ownerToISO(d);
     if (!blocked.has(iso)) result.add(iso);
   }
@@ -702,6 +688,7 @@ function renderOwnerCalendarForSelected() {
   const last = new Date(ownerCalMonthCursor.getFullYear(), ownerCalMonthCursor.getMonth() + 1, 0);
 
   labelEl.textContent = `${first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })} – ${model}`;
+  updateOwnerRangeLabel();
 
   const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   weekdaysEl.innerHTML = weekdayLabels.map(w => `<div>${w}</div>`).join('');
@@ -719,12 +706,83 @@ function renderOwnerCalendarForSelected() {
     const iso = ownerToISO(d);
     const isAvailable = availableSet.has(iso);
     const isBlocked = blockedSet.has(iso);
-    const cls = isAvailable ? 'available' : 'unavailable';
+    const isInRange =
+      ownerRangeStartIso &&
+      (ownerRangeEndIso || ownerRangeStartIso) &&
+      iso >= ownerRangeStartIso &&
+      iso <= (ownerRangeEndIso || ownerRangeStartIso);
+
+    let cls = isAvailable ? 'available' : 'unavailable';
+    if (isInRange) {
+      cls += ' in-range';
+      if (iso === ownerRangeStartIso) cls += ' range-start';
+      if (ownerRangeEndIso && iso === ownerRangeEndIso) cls += ' range-end';
+    }
     const aria = isAvailable ? `Available ${iso}` : (isBlocked ? `Rented ${iso}` : `Closed ${iso}`);
-    parts.push(`<div class="owner-cal-day ${cls}" aria-label="${aria}">${day}</div>`);
+    parts.push(`<div class="owner-cal-day ${cls}" data-iso="${iso}" aria-label="${aria}">${day}</div>`);
   }
 
   gridEl.innerHTML = parts.join('');
+}
+
+function handleOwnerCalendarClick(iso) {
+  if (!ownerRangeStartIso || (ownerRangeStartIso && ownerRangeEndIso)) {
+    ownerRangeStartIso = iso;
+    ownerRangeEndIso = null;
+  } else {
+    if (iso < ownerRangeStartIso) {
+      ownerRangeEndIso = ownerRangeStartIso;
+      ownerRangeStartIso = iso;
+    } else {
+      ownerRangeEndIso = iso;
+    }
+  }
+  updateOwnerRangeLabel();
+  renderOwnerCalendarForSelected();
+}
+
+function isoToDate(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+async function setOwnerRangeBlocked(isBlocked) {
+  const modelSelect = document.getElementById('model-select');
+  if (!modelSelect || !modelSelect.value) {
+    alert("Please choose a vehicle first.");
+    return;
+  }
+
+  if (!ownerRangeStartIso) {
+    alert("Please select a date range on the calendar.");
+    return;
+  }
+
+  const startIso = ownerRangeStartIso;
+  const endIso = ownerRangeEndIso || ownerRangeStartIso;
+
+  const startDate = isoToDate(startIso);
+  const endDate = isoToDate(endIso);
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return;
+
+  const model = modelSelect.value;
+  const batch = writeBatch(db);
+
+  const cursor = new Date(startDate);
+  while (cursor <= endDate) {
+    const iso = ownerToISO(cursor);
+    const docId = `${model}_${iso}`;
+    const ref = doc(db, "availability", docId);
+    if (isBlocked) {
+      batch.set(ref, { model, date: iso });
+    } else {
+      batch.delete(ref);
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  await batch.commit();
+  await syncUI();
 }
 
 function startOwnerApp() {
@@ -733,19 +791,33 @@ function startOwnerApp() {
   if (appShell) appShell.classList.remove('hidden');
   if (footer) footer.classList.remove('hidden');
 
-  document.getElementById('toggle-btn').addEventListener('click', toggleDate);
+  const blockBtn = document.getElementById('block-range-btn');
+  const unblockBtn = document.getElementById('unblock-range-btn');
+  const clearRangeBtn = document.getElementById('clear-range-btn');
+
+  if (blockBtn) blockBtn.addEventListener('click', () => setOwnerRangeBlocked(true));
+  if (unblockBtn) unblockBtn.addEventListener('click', () => setOwnerRangeBlocked(false));
+  if (clearRangeBtn) clearRangeBtn.addEventListener('click', clearOwnerRangeSelection);
+
   document.getElementById('clear-model-btn').addEventListener('click', clearModelDates);
 
   const modelSelect = document.getElementById('model-select');
   if (modelSelect) {
     modelSelect.addEventListener('change', () => {
       setOwnerMonthCursor(new Date());
+      clearOwnerRangeSelection();
       renderOwnerCalendarForSelected();
     });
   }
 
-  // Default date to today for convenience
-  document.getElementById('date-input').value = new Date().toISOString().slice(0, 10);
+  const gridEl = document.getElementById('owner-cal-grid');
+  if (gridEl) {
+    gridEl.addEventListener('click', (e) => {
+      const cell = e.target.closest('.owner-cal-day');
+      if (!cell || !cell.dataset.iso) return;
+      handleOwnerCalendarClick(cell.dataset.iso);
+    });
+  }
 
   renderModelSelect();
   setOwnerMonthCursor(new Date());
