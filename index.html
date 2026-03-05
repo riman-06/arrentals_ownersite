@@ -550,8 +550,19 @@
 
             <div id="owner-calendar-wrapper">
                 <div class="owner-cal-header">
-                    <span id="owner-cal-label"></span>
-                    <span id="owner-range-label" class="owner-range-label"></span>
+
+                  <button id="owner-prev-month" class="btn-ghost">
+                  <i class="fa-solid fa-chevron-left"></i>
+                  </button>
+                  
+                  <span id="owner-cal-label"></span>
+                  
+                  <button id="owner-next-month" class="btn-ghost">
+                  <i class="fa-solid fa-chevron-right"></i>
+                  </button>
+                  
+                  <span id="owner-range-label" class="owner-range-label"></span>
+                
                 </div>
                 <div class="owner-cal-weekdays" id="owner-cal-weekdays"></div>
                 <div class="owner-cal-grid" id="owner-cal-grid"></div>
@@ -793,7 +804,10 @@ function renderOwnerCalendarForSelected() {
   for (let day = 1; day <= daysInMonth; day++) {
     const d = new Date(first.getFullYear(), first.getMonth(), day);
     const iso = ownerToISO(d);
-    const isAvailable = availableSet.has(iso);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const isPast = d < today;
+    const isAvailable = !isPast && availableSet.has(iso);
     const isBlocked = blockedSet.has(iso);
     const isInRange =
       ownerRangeStartIso &&
@@ -892,6 +906,19 @@ function startOwnerApp() {
 
   const modelSelect = document.getElementById('model-select');
   if (modelSelect) {
+    document.getElementById("owner-prev-month").addEventListener("click", () => {
+      const d = new Date(ownerCalMonthCursor);
+      d.setMonth(d.getMonth() - 1);
+      setOwnerMonthCursor(d);
+      renderOwnerCalendarForSelected();
+    });
+
+    document.getElementById("owner-next-month").addEventListener("click", () => {
+      const d = new Date(ownerCalMonthCursor);
+      d.setMonth(d.getMonth() + 1);
+      setOwnerMonthCursor(d);
+      renderOwnerCalendarForSelected();
+    });
     modelSelect.addEventListener('change', () => {
       setOwnerMonthCursor(new Date());
       clearOwnerRangeSelection();
